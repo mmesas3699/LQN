@@ -50,7 +50,7 @@ class DeleteCharacter(graphene.Mutation):
         if character_instance:
             character_instance.delete()
 
-            return DeleteCharacter(character=character_instance)
+            return None
         
         return None
 
@@ -88,13 +88,13 @@ class CreateMovie(graphene.Mutation):
 
 class AddCharactersToMovie(graphene.Mutation):
     class Arguments:
-        id = graphene.ID()
+        movie_id = graphene.ID()
         characters = graphene.List(String, description="List of character's names")
     
     movie = graphene.Field(MovieType)
 
-    def mutate(self, info, id, characters):
-        movie_instance = Movie.objects.get(id=id)
+    def mutate(self, info, movie_id, characters):
+        movie_instance = Movie.objects.get(id=movie_id)
         if characters:
             for character in characters:
                 character_instance = Character.objects.get(name=character)
@@ -105,21 +105,61 @@ class AddCharactersToMovie(graphene.Mutation):
             return None
 
 
-class AddPlanetsToMovies(graphene.Mutation):
+class AddPlanetsToMovie(graphene.Mutation):
     class Arguments:
-        id = graphene.ID()
+        movie_id = graphene.ID()
         planets = graphene.List(String, description="List of planet's names")
 
     movie = graphene.Field(MovieType)
 
-    def mutate(self, info, id, planets):
-        movie_instance = Movie.objects.get(id=id)
+    def mutate(self, info, movie_id, planets):
+        movie_instance = Movie.objects.get(id=movie_id)
         if planets:
             for planet in planets:
                 planet_instance = Planet.objects.get(name=planet)
                 movie_instance.planets.add(planet_instance)
             
-            return AddPlanetsToMovies(movie=movie_instance)
+            return AddPlanetsToMovie(movie=movie_instance)
+        else:
+            return None
+
+
+class UpdateMovie(graphene.Mutation):
+    class Arguments:
+        movie_id = graphene.ID()
+        name = graphene.String()
+        year = graphene.Int()
+        opening_text = graphene.String()
+        director_name = graphene.String()
+    
+    movie = graphene.Field(MovieType)
+
+    def mutate(self, info, movie_id, name, year, opening_text, director_name):
+        movie_instance = Movie.objects.get(id=movie_id)
+        if movie_instance:
+            movie_instance.name = name
+            movie_instance.year = year
+            movie_instance.opening_text = opening_text
+            movie_instance.director = director_name
+            movie_instance.save()
+
+            return UpdateMovie(movie=movie_instance)
+        else:
+            return None
+
+
+class DeleteMovie(graphene.Mutation):
+    class Arguments:
+        movie_id = graphene.ID()
+    
+    movie = graphene.Field(MovieType)
+
+    def mutate(self, info, movie_id):
+        movie_instance = Movie.objects.get(id=movie_id)
+        if movie_instance:
+            movie_instance.delete()
+
+            return None
         else:
             return None
 
@@ -164,6 +204,6 @@ class DeletePlanet(graphene.Mutation):
         planet_instance = Planet.objects.get(id=id)
         if planet_instance:
             planet_instance.delete()
-            return DeletePlanet(planet=planet_instance)
+            return None
         else:
             return None
