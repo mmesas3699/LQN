@@ -21,5 +21,5 @@ class MovieType(DjangoObjectType):
     class Meta:
         model = Movie
         fields = (
-            'name', 'year', 'opening_text', 'director_name',
+            'id', 'name', 'year', 'opening_text', 'director_name',
             'planets', 'characters')
