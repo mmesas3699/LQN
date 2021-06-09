@@ -27,8 +27,8 @@ class Movie(models.Model):
     year = models.PositiveSmallIntegerField(blank=True, null=True)
     opening_text = models.TextField(max_length=2000, blank=False, null=False)
     director_name = models.CharField(max_length=250, unique=True, null=False, blank=False)
-    planets = models.ManyToManyField(Planet)
-    characters = models.ManyToManyField(Character)
+    planets = models.ManyToManyField(Planet, related_name='movies')
+    characters = models.ManyToManyField(Character, related_name='movies')
 
     def __str__(self):
         return self.name
