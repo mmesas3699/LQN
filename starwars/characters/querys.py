@@ -14,6 +14,7 @@ class Query(graphene.ObjectType):
     movie = graphene.Field(MovieType, name=graphene.String())
 
     planets = graphene.List(PlanetType)
+    planet = graphene.Field(PlanetType, name=graphene.String())
 
     def resolve_characters(self, info):
         return Character.objects.all()
@@ -29,3 +30,6 @@ class Query(graphene.ObjectType):
 
     def resolve_planets(self, info):
         return Planet.objects.all()
+
+    def resolve_planet(self, info, name):
+        return Planet.objects.get(name=name)

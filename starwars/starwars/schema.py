@@ -17,5 +17,9 @@ class Mutation(graphene.ObjectType):
     add_characters_movie = mutations.AddCharactersToMovie.Field()
     add_planets_movie = mutations.AddPlanetsToMovies.Field()
 
+    create_planet = mutations.CreatePlanet.Field()
+    update_planet = mutations.UpdatePlanet.Field()
+    delete_planet = mutations.DeletePlanet.Field()
+
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

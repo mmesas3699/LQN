@@ -2,7 +2,7 @@ import graphene
 from graphene.types.scalars import String
 
 from characters.models import Character, Movie, Planet
-from characters.types import CharacterType, MovieType
+from characters.types import CharacterType, MovieType, PlanetType
 
  
 class CreateCharacter(graphene.Mutation):
@@ -120,5 +120,50 @@ class AddPlanetsToMovies(graphene.Mutation):
                 movie_instance.planets.add(planet_instance)
             
             return AddPlanetsToMovies(movie=movie_instance)
+        else:
+            return None
+
+
+class CreatePlanet(graphene.Mutation):
+    class Arguments:
+        name = graphene.String()
+
+    planet = graphene.Field(PlanetType)
+
+    def mutate(self, info, name):
+        planet_instance = Planet.objects.create(name=name)
+
+        return CreatePlanet(planet=planet_instance)
+
+
+class UpdatePlanet(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID()
+        name = graphene.String()
+    
+    planet = graphene.Field(PlanetType)
+
+    def mutate(self, info, id, name):
+        planet_instance = Planet.objects.get(id=id)
+        if planet_instance:
+            planet_instance.name = name
+            planet_instance.save()
+
+            return UpdatePlanet(planet=planet_instance)
+        else:
+            return None
+
+
+class DeletePlanet(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID()
+
+    planet = graphene.Field(PlanetType)
+
+    def mutate(self, info, id):
+        planet_instance = Planet.objects.get(id=id)
+        if planet_instance:
+            planet_instance.delete()
+            return DeletePlanet(planet=planet_instance)
         else:
             return None
